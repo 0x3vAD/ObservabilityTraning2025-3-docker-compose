@@ -2,7 +2,7 @@ services:
   db:
     image: postgres
     env_file:
-    - path: .sample-env
+    - path: sample-env
       required: true
     restart: always
     ports: 

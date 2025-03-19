@@ -5,7 +5,7 @@ import traceback
 
 from dotenv import load_dotenv
 
-load_dotenv(".sample-env")
+load_dotenv("sample-env")
 
 DB_USER  = os.getenv('POSTGRES_USER')
 DB_PASS = os.getenv('POSTGRES_PASSWORD')

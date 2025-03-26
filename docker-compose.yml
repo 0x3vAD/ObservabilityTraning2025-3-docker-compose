@@ -1,17 +1,34 @@
 services:
   db:
+    container_name: postgresdb
     image: postgres
     env_file:
-    - path: sample-env
-      required: true
+      - path: sample-env
     restart: always
-    ports: 
-        - 5432:5432
     volumes:
-        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-        test: ["CMD-SHELL", "pg_isready"]
-        interval: 30s
-        timeout: 60s
-        retries: 5
-        start_period: 80s
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 30s
+  web:
+    container_name: webapp
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - path: sample-env
+    environment:
+      POSTGRES_HOST: db
+    ports:
+      - 8000:8000
+    command: [ "fastapi", "run", "app.py" ]
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8000/health" ]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    depends_on:
+      - db
